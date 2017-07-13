@@ -65,10 +65,10 @@ class RedisSentinelBackend(RedisBackend):
 
     def prepare_exception(self, exc, serializer=None):
         exc = self._wrap_exc(exc)
-        return super(RedisBackend, self).prepare_exception(exc, serializer)
+        return super(RedisSentinelBackend, self).prepare_exception(exc, serializer)
 
     def exception_to_python(self, exc):
-        exc = super(RedisBackend, self).exception_to_python(exc)
+        exc = super(RedisSentinelBackend, self).exception_to_python(exc)
         return self._unwrap_exc(exc)
 
     @staticmethod
@@ -86,7 +86,7 @@ class RedisSentinelBackend(RedisBackend):
     def _unwrap_exc(e):
         try:
             exc = json.loads(str(e))
-            cls = getattr(RedisBackend._get_module(exc['module']), exc['type'])
+            cls = getattr(RedisSentinelBackend._get_module(exc['module']), exc['type'])
             if hasattr(cls, 'deserialize'):
                 return cls.deserialize(exc['data'])
             return pickle.loads(exc['data'])
